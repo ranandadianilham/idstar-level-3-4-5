@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-package-lock.js
+
 
 node_modules
 dist
@@ -25,3 +25,4 @@ dist-ssr
 *.sln
 *.sw?
 todo.txt
+package-lock.json
