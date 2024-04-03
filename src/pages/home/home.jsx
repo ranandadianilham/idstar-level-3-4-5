@@ -4,8 +4,7 @@ import { packageData } from "../../assets/employee";
 import { Button, Modal } from "react-bootstrap";
 import CreateForm from "./create.form";
 import { useSelector, useDispatch, connect } from "react-redux";
-import { decrement, increment, incrementByAmount } from "./home.state";
-import { fetchData } from "./home.action";
+import { fetchEmployeeAll, createEmployee } from "./home.action";
 const mapStateToProps = (state) => ({
   // Map state slices to props
   data: state.counter.employees,
@@ -15,17 +14,16 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = {
   // Map actions to component props
-  fetchData,
+  fetchData: fetchEmployeeAll,
+  createEmployee: createEmployee,
 };
 
 const Home = (props) => {
-  const { loading, data } = props;
+  const { loading, data, createEmployee } = props;
   useEffect(() => {
     props.fetchData();
   }, []);
 
-  const count = useSelector((state) => state.counter.value);
-  const dispatch = useDispatch();
 
   const [newForm, setNewForm] = useState({
     id: "",
@@ -54,6 +52,23 @@ const Home = (props) => {
         createForm={newForm}
         updateNewForm={updateNewForm}
       />
+      <Button
+        onClick={() => {
+          let data = {
+            name: "Budi",
+            dob: "1996-01-01",
+            status: "active",
+            address: "jakarta",
+            karyawanDetail: {
+              nik: "123455",
+              npwp: "12345677",
+            },
+          };
+          createEmployee(data);
+        }}
+      >
+        save
+      </Button>
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-end">
           <Button onClick={handleCreate}>Create</Button>
@@ -62,10 +77,13 @@ const Home = (props) => {
           <table className="w-full table-auto">
             <thead>
               <tr className="bg-gray-2 text-left dark:bg-meta-4">
-                <th className="min-w-[220px] py-4 px-4 font-medium text-black dark:text-white xl:pl-11">
+                <th className="min-w-[50px] py-4 px-1 font-medium text-black dark:text-white">
+                  No
+                </th>
+                <th className="min-w-[120px] py-4 px-2 font-medium text-black dark:text-white">
                   Name
                 </th>
-                <th className="min-w-[150px] py-4 px-4 font-medium text-black dark:text-white">
+                <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
                   Nik
                 </th>
                 <th className="min-w-[120px] py-4 px-4 font-medium text-black dark:text-white">
@@ -80,16 +98,21 @@ const Home = (props) => {
               </tr>
             </thead>
             <tbody>
-              {packageData.map((packageItem, key) => (
-                <tr key={key + packageItem.id}>
+              {data.map((packageItem) => (
+                <tr key={packageItem.id}>
+                  <td className="border-b border-[#eee] py-5 px-1 dark:border-strokedark">
+                    <p className="text-black dark:text-white">
+                      {packageItem.id}
+                    </p>
+                  </td>
                   <td className="border-b border-[#eee] py-5 px-4 pl-9 dark:border-strokedark xl:pl-11">
-                    <h5 className="font-medium text-black dark:text-white">
+                    <p className="font-medium text-black dark:text-white">
                       {packageItem.name}
-                    </h5>
+                    </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <p className="text-black dark:text-white">
-                      {packageItem.nik}
+                      {packageItem.karyawanDetail.nik}
                     </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
@@ -105,7 +128,7 @@ const Home = (props) => {
                           : "bg-warning text-warning"
                       }`}
                     >
-                      {packageItem.status ? "Active" : "Non-Active"}
+                      {packageItem.status ? "Active" : "Inactive"}
                     </p>
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">

@@ -8,6 +8,9 @@ export const counterSlice = createSlice({
     showDelete: false,
     showDetail: false,
     loading: false,
+    saveLoading: false,
+    deleteLoading: false,
+    successMessage: "",
     error: null,
     isEditing: false,
     employees: [],
@@ -32,19 +35,28 @@ export const counterSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    increment: (state) => {
-      state.value += 1;
+    saveRequest: (state) => {
+      state.saveLoading = true;
+      state.error = null;
     },
-    decrement: (state) => {
-      state.value -= 1;
+    saveSuccess: (state, action) => {
+      state.successMessage = action.payload;
+      state.saveLoading = false;
     },
-    incrementByAmount: (state, action) => {
-      console.log("action", action.payload);
-      state.value += action.payload;
+    saveFailure(state, action) {
+      state.saveLoading = false;
+      state.error = action.payload;
     },
   },
 });
 
-export const { fetchAllDataFailure, fetchAllDataSuccess, fetchAllRequest, increment, decrement, incrementByAmount } = counterSlice.actions;
+export const {
+  fetchAllDataFailure,
+  fetchAllDataSuccess,
+  fetchAllRequest,
+  saveFailure,
+  saveRequest,
+  saveSuccess,
+} = counterSlice.actions;
 
 export default counterSlice.reducer;
