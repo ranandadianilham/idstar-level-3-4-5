@@ -3,34 +3,30 @@ import DefaultLayout from "../../layout/DefaultLayout";
 import { packageData } from "../../assets/employee";
 import { Button, Modal } from "react-bootstrap";
 import CreateForm from "./create.form";
-/* const packageData = [
-  {
-    name: "Free package",
-    nik: '',
-    address: '',
-    status: "Paid",
-  },
-  {
-    name: "Standard Package",
-    price: 59.0,
-    invoiceDate: `Jan 13,2023`,
-    status: "Paid",
-  },
-  {
-    name: "Business Package",
-    price: 99.0,
-    invoiceDate: `Jan 13,2023`,
-    status: "Unpaid",
-  },
-  {
-    name: "Standard Package",
-    price: 59.0,
-    invoiceDate: `Jan 13,2023`,
-    status: "Pending",
-  },
-]; */
+import { useSelector, useDispatch, connect } from "react-redux";
+import { decrement, increment, incrementByAmount } from "./home.state";
+import { fetchData } from "./home.action";
+const mapStateToProps = (state) => ({
+  // Map state slices to props
+  data: state.counter.employees,
+  loading: state.counter.loading,
+  error: state.counter.error,
+});
 
-const home = () => {
+const mapDispatchToProps = {
+  // Map actions to component props
+  fetchData,
+};
+
+const Home = (props) => {
+  const { loading, data } = props;
+  useEffect(() => {
+    props.fetchData();
+  }, []);
+
+  const count = useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
   const [newForm, setNewForm] = useState({
     id: "",
     name: "",
@@ -49,12 +45,15 @@ const home = () => {
     }));
   };
 
-
   const closeForm = () => setFormOpen(false);
   return (
-    <DefaultLayout>{
-      console.log('ne',  newForm)}
-      <CreateForm show={formOpen} handleClose={closeForm} createForm={newForm} updateNewForm={updateNewForm} />
+    <DefaultLayout>
+      <CreateForm
+        show={formOpen}
+        handleClose={closeForm}
+        createForm={newForm}
+        updateNewForm={updateNewForm}
+      />
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-end">
           <Button onClick={handleCreate}>Create</Button>
@@ -175,5 +174,10 @@ const home = () => {
     </DefaultLayout>
   );
 };
+const HomeComponent = connect(mapStateToProps, mapDispatchToProps)(Home);
 
-export default home;
+const App = (props) => {
+  return <HomeComponent />;
+};
+
+export default App;
