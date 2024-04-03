@@ -4,26 +4,32 @@ import { packageData } from "../../assets/employee";
 import { Button, Modal } from "react-bootstrap";
 import CreateForm from "./create.form";
 import { useSelector, useDispatch, connect } from "react-redux";
-import { fetchEmployeeAll, createEmployee } from "./home.action";
+import {
+  fetchEmployeeAll,
+  createEmployee,
+  fetchEmployeeById,
+} from "./home.action";
 const mapStateToProps = (state) => ({
   // Map state slices to props
   data: state.counter.employees,
   loading: state.counter.loading,
   error: state.counter.error,
+  employee: state.counter.employee,
 });
 
 const mapDispatchToProps = {
   // Map actions to component props
   fetchData: fetchEmployeeAll,
   createEmployee: createEmployee,
+  fetchEmployeeById: fetchEmployeeById,
 };
 
 const Home = (props) => {
-  const { loading, data, createEmployee } = props;
+  const { loading, data, createEmployee, employee } = props;
+  console.log('em', employee);
   useEffect(() => {
     props.fetchData();
   }, []);
-
 
   const [newForm, setNewForm] = useState({
     id: "",
@@ -133,7 +139,13 @@ const Home = (props) => {
                   </td>
                   <td className="border-b border-[#eee] py-5 px-4 dark:border-strokedark">
                     <div className="flex items-center space-x-3.5">
-                      <button className="hover:text-primary">
+                      <button
+                        className="hover:text-primary"
+                        onClick={() => {
+                          console.log("ww");
+                          props.fetchEmployeeById(packageItem.id);
+                        }}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"

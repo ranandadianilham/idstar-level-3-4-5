@@ -17,13 +17,13 @@ export const fetchEmployeeAll =
   };
 
 export const fetchEmployeeById = (id) => async (dispatch) => {
-  dispatch(dataSlice.fetchAllRequest());
+  dispatch(dataSlice.fetchByIdRequest());
   try {
     const response = await axios.get(`${host}/v1/karyawan/${id}`);
-    console.log("re", response.data.data.content);
-    dispatch(dataSlice.fetchAllDataSuccess(response.data.data.content));
+    console.log("ww", response.data.data.content);
+    dispatch(dataSlice.fetchByIdSuccess(response.data.data));
   } catch (error) {
-    dispatch(dataSlice.fetchAllDataFailure(error.message));
+    dispatch(dataSlice.fetchByIdFailure(error.message));
   }
 };
 

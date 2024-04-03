@@ -10,16 +10,12 @@ export const counterSlice = createSlice({
     loading: false,
     saveLoading: false,
     deleteLoading: false,
+    viewLoading: false,
     successMessage: "",
     error: null,
     isEditing: false,
     employees: [],
     employee: {
-      id: "",
-      name: "",
-      nik: "",
-      address: "",
-      status: true,
     },
   },
   reducers: {
@@ -47,6 +43,18 @@ export const counterSlice = createSlice({
       state.saveLoading = false;
       state.error = action.payload;
     },
+    fetchByIdRequest: (state) => {
+      state.viewLoading = true;
+      state.error = null;
+    },
+    fetchByIdSuccess: (state, action) => {
+      state.employee = action.payload;
+      state.viewLoading = false;
+    },
+    fetchByIdFailure(state, action) {
+      state.viewLoading = false;
+      state.error = action.payload;
+    },
   },
 });
 
@@ -57,6 +65,9 @@ export const {
   saveFailure,
   saveRequest,
   saveSuccess,
+  fetchByIdFailure,
+  fetchByIdRequest,
+  fetchByIdSuccess
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
