@@ -1,22 +1,25 @@
+import moment from "moment";
 import React, { useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import ReactDatePicker from "react-datepicker";
-import 'react-datepicker/dist/react-datepicker.css';
+import "react-datepicker/dist/react-datepicker.css";
 
-const CreateForm = ({ show, handleClose, createForm, updateNewForm }) => {
+const CreateForm = ({ show, handleClose, createForm, updateNewForm, createEmplyee }) => {
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Modal heading</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <FormBody createForm={createForm} updateNewForm={updateNewForm}/>
+        <FormBody createForm={createForm} updateNewForm={updateNewForm} />
       </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={handleClose}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleClose}>
+        <Button variant="primary" onClick={() => {
+          createEmplyee();
+        }}>
           Save Changes
         </Button>
       </Modal.Footer>
@@ -24,8 +27,31 @@ const CreateForm = ({ show, handleClose, createForm, updateNewForm }) => {
   );
 };
 
-const FormBody = ({createForm, updateNewForm}) => {
-    const [startDate, setStartDate] = useState(new Date());
+export const DetailView = ({ show, handleClose, form }) => {
+  return (
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Employee Detail</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>nama: {form.name}</p>
+        <p>NIK: {form?.karyawanDetail?.nik}</p>
+        <p>NPWP: {(form?.karyawanDetail?.npwp)}</p>
+        <p>Tanggal Lahir: {moment(form.dob).format("MMM DD YYYY")}</p>
+        <p>Alamat: {form.address}</p>
+        <p>Status: {form.status}</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+const FormBody = ({ createForm, updateNewForm }) => {
+  const [startDate, setStartDate] = useState(new Date());
 
   return (
     <>
@@ -46,6 +72,10 @@ const FormBody = ({createForm, updateNewForm}) => {
                       name
                     </label>
                     <input
+                    value={createForm.name}
+                    onChange={(e) => {
+                      updateNewForm((prev) => ({...prev, name: e.target.value}));
+                    }}
                       type="text"
                       placeholder="Enter your name"
                       className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -54,15 +84,17 @@ const FormBody = ({createForm, updateNewForm}) => {
                 </div>
 
                 <div className="mb-4.5">
-                <div className="w-full">
-                  <label className="mb-2.5 block text-black dark:text-white">
-                    Birth Date
-                  </label>
-                  <ReactDatePicker
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    selected={startDate}
-                    onChange={(date) => setStartDate(date)}
-                  />
+                  <div className="w-full">
+                    <label className="mb-2.5 block text-black dark:text-white">
+                      Birth Date
+                    </label>
+                    <ReactDatePicker
+                      className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                      selected={createForm.dob}
+                      onChange={(e) => {
+                        updateNewForm((prev) => ({...prev, dob: e}));
+                      }}
+                    />
                   </div>
                 </div>
 
@@ -71,7 +103,13 @@ const FormBody = ({createForm, updateNewForm}) => {
                     NIK
                   </label>
                   <input
-                    type="text"
+                   value={createForm.karyawanDetail.name}
+                   onChange={(e) => {
+                     updateNewForm((prev) => ({...prev, karyawanDetail : {
+                      ...prev.karyawanDetail, nik: e.target.value
+                     }}));
+                   }}
+                    type="number"
                     placeholder="Enter your NIK"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   />
@@ -82,9 +120,15 @@ const FormBody = ({createForm, updateNewForm}) => {
                     Npwp
                   </label>
                   <input
-                    type="text"
+                    type="number"
+                    value={createForm.karyawanDetail.npwp}
+                   onChange={(e) => {
+                     updateNewForm((prev) => ({...prev, karyawanDetail : {
+                      ...prev.karyawanDetail, npwp: e.target.value
+                     }}));
+                   }}
                     placeholder="Enter your NPWP"
-                    className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    className="w-full no-de rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   />
                 </div>
 
@@ -97,17 +141,21 @@ const FormBody = ({createForm, updateNewForm}) => {
                       type={"radio"}
                       id={`default-radio`}
                       label={`Active`}
-                      value={true}
-                      checked={createForm.status}
-                      onChange={(e) => {}}
+                      value={'active'}
+                      checked={createForm.status === "active"}
+                      onChange={(e) => {
+                        updateNewForm((prev) => ({...prev, status: e.target.value}));
+                      }}
                     />
                     <Form.Check // prettier-ignore
                       type={"radio"}
                       id={`default-radio`}
                       label={`Non-Active`}
-                      value={'false'}
-                      checked={!createForm.status}
-                      onChange={(e) => {}}
+                      value={'inactive'}
+                      checked={createForm.status === "inactive"}
+                      onChange={(e) => {
+                        updateNewForm((prev) => ({...prev,  status: e.target.value}));
+                      }}
                     />
                   </div>
                 </div>
@@ -118,6 +166,10 @@ const FormBody = ({createForm, updateNewForm}) => {
                   </label>
                   <textarea
                     rows={6}
+                    value={createForm.address}
+                    onChange={(e) => {
+                      updateNewForm((prev) => ({...prev,  address: e.target.value}));
+                    }}
                     placeholder="Type your Address"
                     className="w-full rounded border-[1.5px] border-stroke bg-transparent py-3 px-5 text-black outline-none transition focus:border-primary active:border-primary disabled:cursor-default disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   ></textarea>

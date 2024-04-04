@@ -2,13 +2,15 @@ import React, { useEffect, useState } from "react";
 import DefaultLayout from "../../layout/DefaultLayout";
 import { packageData } from "../../assets/employee";
 import { Button, Modal } from "react-bootstrap";
-import CreateForm from "./create.form";
+import CreateForm, { DetailView } from "./create.form";
 import { useSelector, useDispatch, connect } from "react-redux";
 import {
   fetchEmployeeAll,
   createEmployee,
   fetchEmployeeById,
 } from "./home.action";
+import { useNavigate } from 'react-router-dom';
+
 const mapStateToProps = (state) => ({
   // Map state slices to props
   data: state.counter.employees,
@@ -26,19 +28,36 @@ const mapDispatchToProps = {
 
 const Home = (props) => {
   const { loading, data, createEmployee, employee } = props;
-  console.log('em', employee);
+  const navigate = useNavigate();
   useEffect(() => {
     props.fetchData();
   }, []);
 
   const [newForm, setNewForm] = useState({
-    id: "",
     name: "",
-    nik: "",
+    dob: null,
+    status: "",
     address: "",
-    status: true,
+    karyawanDetail: {
+      nik: "",
+      npwp: "",
+    },
   });
+
+  const resetForm = () => {
+    setNewForm({
+      name: "",
+      dob: null,
+      status: "",
+      address: "",
+      karyawanDetail: {
+        nik: "",
+        npwp: "",
+      },
+    });
+  };
   const [formOpen, setFormOpen] = useState(false);
+  const [detailView, setDetailView] = useState(false);
   const handleCreate = () => {
     setFormOpen(true);
   };
@@ -49,32 +68,32 @@ const Home = (props) => {
     }));
   };
 
+  const createEmplyee = async () => {
+    await createEmployee(newForm);
+    closeForm();
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    if (!formOpen) resetForm();
+  }, [formOpen]);
+
   const closeForm = () => setFormOpen(false);
   return (
     <DefaultLayout>
+      {console.log(newForm)}
       <CreateForm
         show={formOpen}
         handleClose={closeForm}
         createForm={newForm}
-        updateNewForm={updateNewForm}
+        updateNewForm={setNewForm}
+        createEmplyee={createEmplyee}
       />
-      <Button
-        onClick={() => {
-          let data = {
-            name: "Budi",
-            dob: "1996-01-01",
-            status: "active",
-            address: "jakarta",
-            karyawanDetail: {
-              nik: "123455",
-              npwp: "12345677",
-            },
-          };
-          createEmployee(data);
-        }}
-      >
-        save
-      </Button>
+      <DetailView
+        show={detailView}
+        handleClose={() => setDetailView(false)}
+        form={employee}
+      />
       <div className="rounded-sm border border-stroke bg-white px-5 pt-6 pb-2.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:pb-1">
         <div className="flex justify-end">
           <Button onClick={handleCreate}>Create</Button>
@@ -142,8 +161,9 @@ const Home = (props) => {
                       <button
                         className="hover:text-primary"
                         onClick={() => {
-                          console.log("ww");
+                          //console.log("ww");
                           props.fetchEmployeeById(packageItem.id);
+                          setDetailView(true);
                         }}
                       >
                         <svg

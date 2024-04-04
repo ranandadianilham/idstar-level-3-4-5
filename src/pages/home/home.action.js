@@ -20,7 +20,6 @@ export const fetchEmployeeById = (id) => async (dispatch) => {
   dispatch(dataSlice.fetchByIdRequest());
   try {
     const response = await axios.get(`${host}/v1/karyawan/${id}`);
-    console.log("ww", response.data.data.content);
     dispatch(dataSlice.fetchByIdSuccess(response.data.data));
   } catch (error) {
     dispatch(dataSlice.fetchByIdFailure(error.message));
@@ -29,10 +28,9 @@ export const fetchEmployeeById = (id) => async (dispatch) => {
 
 export const createEmployee = (body) => async (dispatch) => {
   dispatch(dataSlice.saveRequest());
-  console.log("bd", body);
+  console.log("create new: ", body);
   try {
     const response = await axios.post(`${host}/v1/karyawan/save`, body);
-    console.log("re", response.data);
     dispatch(dataSlice.saveSuccess(response.data));
   } catch (error) {
     dispatch(dataSlice.saveFailure(error.message));
