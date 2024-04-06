@@ -2,13 +2,12 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Home from "./pages/home/home.jsx";
 import Login from "./pages/Authentication/SignIn.jsx";
 import Register from "./pages/Authentication/SignUp.jsx";
 import store from "./state/store";
 import { Provider } from "react-redux";
-
 
 const router = createBrowserRouter([
   {
@@ -30,6 +29,10 @@ const router = createBrowserRouter([
   {
     path: "/auth/forget-password",
     element: <Register />,
+  },
+  {
+    path: "/auth", // Redirect to /auth/signin if path is exactly "/auth"
+    element: <Navigate to="/auth/signin" replace />,
   },
 ]);
 

@@ -1,15 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 /* import Breadcrumb from "../../component/Breadcrumbs/Breadcrumb";
- */import LogoDark from "../../images/logo/logo-dark.svg";
+ */ import LogoDark from "../../images/logo/logo-dark.svg";
 import Logo from "../../images/logo/logo.svg";
 import DefaultLayout from "../../layout/DefaultLayout";
+import { connect } from "react-redux";
+import { authLogin } from "./auth.action";
+import { useNavigate } from "react-router-dom";
 
-const SignIn = () => {
+const SignIn = (props) => {
+  const { loginLoading, data, access_token, user } = props;
+  const [loginForm, setLoginForm] = useState({
+    email: "",
+    password: "",
+  });
+  const navigate = useNavigate();
+  useEffect(() => {
+    localStorage.setItem("access_token", access_token);
+  }, [loginLoading]);
+
+  useEffect(() => {
+    if (
+      localStorage.getItem("access_token") &&
+      localStorage.getItem("access_token") !== ""
+    ) {
+      console.log('wtf');
+      // if loged in
+      navigate("/");
+    }
+  }, [access_token]);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    await props.authLogin(loginForm);
+    // window.location.reload();
+  };
   return (
     <DefaultLayout>
-     {/*  <Breadcrumb pageName="Sign In" /> */}
-
+      {/*  <Breadcrumb pageName="Sign In" /> */}
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
@@ -163,6 +191,10 @@ const SignIn = () => {
                   </label>
                   <div className="relative">
                     <input
+                      value={loginForm.email}
+                      onChange={(e) =>
+                        setLoginForm({ ...loginForm, email: e.target.value })
+                      }
                       type="email"
                       placeholder="Enter your email"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -190,10 +222,14 @@ const SignIn = () => {
 
                 <div className="mb-6">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
-                    Re-type Password
+                    Password
                   </label>
                   <div className="relative">
                     <input
+                      value={loginForm.password}
+                      onChange={(e) =>
+                        setLoginForm({ ...loginForm, password: e.target.value })
+                      }
                       type="password"
                       placeholder="6+ Characters, 1 Capital letter"
                       className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
@@ -224,14 +260,13 @@ const SignIn = () => {
                 </div>
 
                 <div className="mb-5">
-                  <input
-                    type="submit"
-                    value="Sign In"
+                  <button
+                    onClick={handleLogin}
                     className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                  />
+                  >
+                    Sign In
+                  </button>
                 </div>
-
-                
 
                 <div className="mt-6 text-center">
                   <p>
@@ -250,4 +285,25 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+const mapDispatchToProps = {
+  authLogin: authLogin,
+};
+
+const SigninComponent = connect((state) => {
+  console.log(state);
+  return {
+    access_token: state.auth.access_token,
+    user: state.auth.user,
+    token_type: state.auth.token_type,
+    loginLoading: state.auth.loginLoading,
+    registerLoading: state.auth.registerLoading,
+    successMessage: state.auth.successMessage,
+    data: state.auth.data,
+  };
+}, mapDispatchToProps)(SignIn);
+
+const App = (props) => {
+  return <SigninComponent />;
+};
+
+export default App;

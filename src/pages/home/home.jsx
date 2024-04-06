@@ -55,6 +55,14 @@ const Home = (props) => {
     props.fetchData();
   }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    console.log("token", token);
+    if (token === null) {
+      navigate("/auth/signin");
+    }
+  });
+
   const [newForm, setNewForm] = useState({
     name: "",
     dob: null,
@@ -120,9 +128,7 @@ const Home = (props) => {
   };
 
   useEffect(() => {
-    console.count("fetch loading: " + fetchLoading);
     if (isEditing && JSON.stringify(employee) !== "{}") {
-      console.log("fetched", employee);
       setNewForm((prev) => ({
         ...prev,
         name: employee.name,

@@ -1,6 +1,14 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 
 const Header = (props) => {
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log("eee", location.pathname);
+    if (location.pathname.split("/").includes("auth")) {
+    }
+  }, []);
   return (
     <header className="sticky top-0 z-999 flex w-full bg-white drop-shadow-1 dark:bg-boxdark dark:drop-shadow-none">
       <div className="flex flex-grow items-center justify-between px-4 py-4 shadow-2 md:px-6 2xl:px-11">
@@ -79,35 +87,33 @@ const Header = (props) => {
                 </svg>
               </button>
 
-              <input
+              {/* <input
                 type="text"
                 placeholder="Type to search..."
                 className="w-full bg-transparent pl-9 pr-4 text-black focus:outline-none dark:text-white xl:w-125"
-              />
+              /> */}
             </div>
           </form>
         </div>
-
-        <div className="flex items-center gap-3 2xsm:gap-7">
-          <ul className="flex items-center gap-2 2xsm:gap-4">
-            <li>
-              <Link
-                to="#"
-                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
-              >
-                Employee
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="#"
-                className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
-              >
-                Log out
-              </Link>
-            </li>
-          </ul>
-        </div>
+        {!location.pathname.split("/").includes("auth") ? (
+          <div className="flex items-center gap-3 2xsm:gap-7">
+            <ul className="flex items-center gap-2 2xsm:gap-4">
+              <li>
+                <Link
+                  to="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    localStorage.removeItem("access_token");
+                    window.location.reload();
+                  }}
+                  className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+                >
+                  Log out
+                </Link>
+              </li>
+            </ul>
+          </div>
+        ) : null}
       </div>
     </header>
   );
