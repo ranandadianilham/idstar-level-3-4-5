@@ -8,8 +8,10 @@ import {
   fetchEmployeeAll,
   createEmployee,
   fetchEmployeeById,
+  deleteEmployee,
+  editEmployee,
 } from "./home.action";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 const mapStateToProps = (state) => ({
   // Map state slices to props
@@ -17,6 +19,8 @@ const mapStateToProps = (state) => ({
   loading: state.counter.loading,
   error: state.counter.error,
   employee: state.counter.employee,
+  fetchLoading: state.counter.viewLoading,
+  deleteLoading: state.counter.deleteLoading,
 });
 
 const mapDispatchToProps = {
@@ -24,10 +28,28 @@ const mapDispatchToProps = {
   fetchData: fetchEmployeeAll,
   createEmployee: createEmployee,
   fetchEmployeeById: fetchEmployeeById,
+  deleteEmployee: deleteEmployee,
+  editEmployee: editEmployee,
 };
 
 const Home = (props) => {
-  const { loading, data, createEmployee, employee } = props;
+  const {
+    loading,
+    data,
+    createEmployee,
+    employee,
+    fetchLoading,
+    editEmployee,
+  } = props;
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [deleteId, setShowDeleteId] = useState(null);
+  const [showDelete, setShowDelete] = useState(false);
+
+  const handleCloseDelete = () => {
+    setShowDelete(false);
+    setShowDeleteId(null);
+  };
   const navigate = useNavigate();
   useEffect(() => {
     props.fetchData();
@@ -55,6 +77,7 @@ const Home = (props) => {
         npwp: "",
       },
     });
+    setIsEditing(false);
   };
   const [formOpen, setFormOpen] = useState(false);
   const [detailView, setDetailView] = useState(false);
@@ -69,7 +92,11 @@ const Home = (props) => {
   };
 
   const createEmplyee = async () => {
-    await createEmployee(newForm);
+    if (isEditing) {
+      await editEmployee({ ...newForm, id: editingId });
+    } else {
+      await createEmployee(newForm);
+    }
     closeForm();
     window.location.reload();
   };
@@ -78,10 +105,59 @@ const Home = (props) => {
     if (!formOpen) resetForm();
   }, [formOpen]);
 
-  const closeForm = () => setFormOpen(false);
+  useEffect(() => {
+    //if (!isEditing && fetchLoading) return;
+    // console.log("e", employee);
+  }, [fetchLoading]);
+
+  const handleEditView = (id) => {
+    // fetch data
+    // open view
+    // edit sttuff
+    setIsEditing(true);
+    setEditingId(id);
+    props.fetchEmployeeById(id);
+  };
+
+  useEffect(() => {
+    console.count("fetch loading: " + fetchLoading);
+    if (isEditing && JSON.stringify(employee) !== "{}") {
+      console.log("fetched", employee);
+      setNewForm((prev) => ({
+        ...prev,
+        name: employee.name,
+        dob: employee.dob,
+        status: employee.status,
+        address: employee.address,
+        karyawanDetail: {
+          nik: employee?.karyawanDetail?.nik,
+          npwp: employee?.karyawanDetail?.npwp,
+        },
+      }));
+      setFormOpen(true);
+    }
+  }, [fetchLoading]);
+
+  const closeForm = () => {
+    setFormOpen(false);
+    setIsEditing(false);
+    setEditingId(null);
+  };
+
+  const handleDelete = async () => {
+    // handleDelete();
+    await props.deleteEmployee(deleteId);
+    window.location.reload();
+    // handleCloseDelete();
+  };
   return (
     <DefaultLayout>
-      {console.log(newForm)}
+      <DeleteConfirm
+        show={showDelete}
+        handleClose={handleCloseDelete}
+        handleDelete={handleDelete}
+        id={deleteId}
+      />
       <CreateForm
         show={formOpen}
         handleClose={closeForm}
@@ -186,7 +262,15 @@ const Home = (props) => {
                           />
                         </svg>
                       </button>
-                      <button className="hover:text-primary">
+                      <button
+                        className="hover:text-primary"
+                        onClick={() => {
+                          handleEditView(packageItem.id);
+
+                          //setFormOpen(true);
+                          //setIsEditing(() => true);
+                        }}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -202,7 +286,14 @@ const Home = (props) => {
                           />
                         </svg>
                       </button>
-                      <button className="hover:text-primary">
+                      <button
+                        className="hover:text-primary"
+                        onClick={() => {
+                          setShowDelete(true);
+                          setShowDeleteId(packageItem.id);
+                          //props.deleteEmployee(packageItem.id);
+                        }}
+                      >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -229,6 +320,26 @@ const Home = (props) => {
     </DefaultLayout>
   );
 };
+
+const DeleteConfirm = ({ handleDelete, show, handleClose, id }) => {
+  return (
+    <Modal show={show} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Employee Detail</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>Do you want to delete employee by id {id}?</Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+        <Button variant="danger" onClick={handleDelete}>
+          Delete
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
 const HomeComponent = connect(mapStateToProps, mapDispatchToProps)(Home);
 
 const App = (props) => {

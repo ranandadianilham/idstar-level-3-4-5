@@ -48,11 +48,12 @@ export const editEmployee = (body) => async (dispatch) => {
 };
 
 export const deleteEmployee = (id) => async (dispatch) => {
-  dispatch(dataSlice.saveRequest());
+  dispatch(dataSlice.deleteRequest());
   try {
-    const response = await axios.delete(`${host}/v1/karyawan/${id}`);
-    dispatch(dataSlice.saveSuccess(response.data));
+    const response = await axios.delete(`${host}/v1/karyawan/delete/${id}`);
+    dispatch(dataSlice.deleteSuccess(response.data));
+    // window.location.reload();
   } catch (error) {
-    dispatch(dataSlice.saveFailure(error.message));
+    dispatch(dataSlice.deleteFailure(error.message));
   }
 };

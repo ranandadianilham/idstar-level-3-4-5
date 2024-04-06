@@ -9,6 +9,7 @@ export const counterSlice = createSlice({
     showDetail: false,
     loading: false,
     saveLoading: false,
+    editLoading: false,
     deleteLoading: false,
     viewLoading: false,
     successMessage: "",
@@ -43,6 +44,18 @@ export const counterSlice = createSlice({
       state.saveLoading = false;
       state.error = action.payload;
     },
+    editRequest: (state) => {
+      state.editLoading = true;
+      state.error = null;
+    },
+    editSuccess: (state, action) => {
+      state.successMessage = action.payload;
+      state.editLoading = false;
+    },
+    editFailure(state, action) {
+      state.editLoading = false;
+      state.error = action.payload;
+    },
     fetchByIdRequest: (state) => {
       state.viewLoading = true;
       state.error = null;
@@ -53,6 +66,18 @@ export const counterSlice = createSlice({
     },
     fetchByIdFailure(state, action) {
       state.viewLoading = false;
+      state.error = action.payload;
+    },
+    deleteRequest: (state) => {
+      state.deleteLoading = true;
+      state.error = null;
+    },
+    deleteSuccess: (state, action) => {
+      state.successMessage = action.payload;
+      state.deleteLoading = false;
+    },
+    deleteFailure(state, action) {
+      state.deleteLoading = false;
       state.error = action.payload;
     },
   },
@@ -67,7 +92,13 @@ export const {
   saveSuccess,
   fetchByIdFailure,
   fetchByIdRequest,
-  fetchByIdSuccess
+  fetchByIdSuccess,
+  editFailure,
+  editRequest,
+  editSuccess,
+  deleteFailure,
+  deleteRequest,
+  deleteSuccess
 } = counterSlice.actions;
 
 export default counterSlice.reducer;
