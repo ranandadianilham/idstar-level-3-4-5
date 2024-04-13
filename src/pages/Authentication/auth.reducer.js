@@ -7,8 +7,10 @@ export const authSlice = createSlice({
     token_type: "",
     loginLoading: {},
     registerLoading: {},
-    successMessage: '',
-    data: {}
+    successMessage: "",
+    message: "",
+    data: {},
+    status: null
   },
   reducers: {
     loginRequest: (state) => {
@@ -27,13 +29,26 @@ export const authSlice = createSlice({
       state.loginLoading = false;
       state.error = action.payload;
     },
+    registerRequest: (state) => {
+      state.registerLoading = true;
+      state.message = "";
+      state.status = null;
+    },
+    registerSuccess: (state, action) => {
+      state.registerLoading = false;
+      state.data = action.payload;
+      state.message = action.payload.message;
+      state.status = action.payload.status;
+      console.log('cc', action);
+    },
+    registerFailure: (state, action) => {
+      state.registerLoading = false;
+      state.message = action.payload.message;
+      state.status = action.payload.status;
+    },
   },
 });
 
-export const {
-    loginRequest,
-    loginSuccess,
-    loginFailure
-} = authSlice.actions;
+export const { loginRequest, loginSuccess, loginFailure, registerFailure, registerRequest, registerSuccess } = authSlice.actions;
 
 export default authSlice.reducer;
