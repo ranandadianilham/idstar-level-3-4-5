@@ -76,14 +76,10 @@ const SignUp = ({ authRegister, status, message, data }) => {
     setErrors(() => errors);
 
     if (Object.keys(errors).length === 0) {
-      // Form is valid, submit data (replace with your form submission logic)
-      console.log("Form submitted successfully:", registerForm);
       await authRegister(registerForm);
     } else {
-      // Display errors to the user
       console.error("Form validation errors:", errors);
       setErrorNotif(true);
-      // You can display the errors using appropriate UI components
     }
   };
 
@@ -106,7 +102,6 @@ const SignUp = ({ authRegister, status, message, data }) => {
   };
 
   useEffect(() => {
-    console.log("status" + data.status + " with message: " + data.message);
     if (data.status) {
       setMessageWindow(true);
     }

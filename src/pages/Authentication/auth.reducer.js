@@ -39,7 +39,6 @@ export const authSlice = createSlice({
       state.data = action.payload;
       state.message = action.payload.message;
       state.status = action.payload.status;
-      console.log("cc", action);
     },
     registerFailure: (state, action) => {
       state.registerLoading = false;

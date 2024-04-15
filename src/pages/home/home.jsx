@@ -57,7 +57,6 @@ const Home = (props) => {
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    console.log("token", token);
     if (token === null || token == "") {
       navigate("/auth/signin");
     }
@@ -243,7 +242,6 @@ const Home = (props) => {
                       <button
                         className="hover:text-primary"
                         onClick={() => {
-                          //console.log("ww");
                           props.fetchEmployeeById(packageItem.id);
                           setDetailView(true);
                         }}

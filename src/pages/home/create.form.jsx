@@ -52,7 +52,6 @@ export const DetailView = ({ show, handleClose, form }) => {
 
 const FormBody = ({ createForm, updateNewForm }) => {
   const [startDate, setStartDate] = useState(new Date());
-console.log('form', createForm);
   return (
     <>
       <div className="grid grid-cols-1 gap-9 ">

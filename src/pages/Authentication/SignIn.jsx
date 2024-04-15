@@ -25,7 +25,7 @@ const SignIn = (props) => {
       localStorage.getItem("access_token") &&
       localStorage.getItem("access_token") !== ""
     ) {
-      // console.log('wtf');
+      // ('wtf');
       // if loged in
       navigate("/");
     }

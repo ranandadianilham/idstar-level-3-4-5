@@ -30,10 +30,8 @@ const ForgetPassword = (props) => {
   };
 
   useEffect(() => {
-    console.log("datas", data);
     if (data.data?.split(":").length > 0) {
       setOtp(data.data?.split(":")[1]);
-      console.log("datas", data.data?.split(":")[1]);
     }
   }, [data]);
 
@@ -77,7 +75,6 @@ const ForgetPassword = (props) => {
         handleClose={() => setErrorNotif(false)}
         message={errors}
       /> */}
-      {console.log("ee", otp)}
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-10">
         <div className=" py-4 px-6 dark:border-strokedark">
           <h3 className="font-medium text-black dark:text-white">

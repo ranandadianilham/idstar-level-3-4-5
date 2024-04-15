@@ -5,7 +5,6 @@ const Header = (props) => {
   const location = useLocation();
 
   useEffect(() => {
-    console.log("eee", location.pathname);
     if (location.pathname.split("/").includes("auth")) {
     }
   }, []);
