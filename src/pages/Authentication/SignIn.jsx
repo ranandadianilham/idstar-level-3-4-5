@@ -142,7 +142,7 @@ const SignIn = (props) => {
                 </div>
                 <div className="mt-6 text-center">
                   <p>
-                    <Link to="/auth/signup" className="text-primary">
+                    <Link to="/auth/forget-password" className="text-primary">
                       Forget password?{" "}
                     </Link>
                   </p>

@@ -58,7 +58,7 @@ const Home = (props) => {
   useEffect(() => {
     const token = localStorage.getItem("access_token");
     console.log("token", token);
-    if (token === null) {
+    if (token === null || token == "") {
       navigate("/auth/signin");
     }
   });
